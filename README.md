@@ -1,3 +1,34 @@
+# All-button IIDX controller
+
+TODO: everything -- nothing has been changed yet.
+
+This repository is expected to be code for a DIY controller using only buttons to play Beatmania IIDX and similar games. In particular, it uses one button for the turntable, toggling direction between presses. The controller could theoretically be made of whatever cheap buttons you have lying around, hastily attached to a Raspberry Pi Pico or other compatible board. I hope to also include measurements for example controllers.
+
+## Features
+
+done:
+
+- absolutely nothing
+
+roadmap:
+
+- analog reporting of turntable key
+- digital reporting of turntable key
+- support for extra buttons to specifically rotate the turntable axis in a given direction
+- turntable key defaults to spinning forwards if left alone for a second
+- support for a lot of buttons
+- no idea if I'm going to actually support the lights because I don't have them
+- sample blueprint for controller with proper rectangle buttons for the keys and a 50mm square SDVX style button for the turntable area
+- sample blueprint for controller with 30mm arcade buttons for everything.
+
+distant roadmap:
+
+- sdvx all button config? this wouldn't need anything fancy, just mapping two digital buttons to the analog axis reported
+
+---
+
+Original README below:
+
 # Pico-Game-Controller
 
 Code for a keyboard or game controller using a Raspberry Pi Pico. Capable of handling 11 buttons, 10 LEDs, 1 WS2812B RGB strip, and 2 encoders. Developed with SDVX and IIDX in mind - see branches release/pocket-sdvx-pico and release/pocket-iidx for preconfigured versions.
