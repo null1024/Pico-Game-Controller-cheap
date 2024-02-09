@@ -1,35 +1,57 @@
 # All-button IIDX controller
 
-This repository is for a DIY controller that uses only buttons to play Beatmania IIDX and similar games. In particular, it uses one button for the turntable, toggling direction between presses. The controller could theoretically be made of whatever cheap buttons you have lying around, hastily attached to a Raspberry Pi Pico or other compatible board. I hope to also include measurements for example controllers.
+This repository is for a DIY controller that uses only buttons to play Beatmania IIDX and similar games. In particular, it uses one button for the turntable, toggling direction between presses. The controller could theoretically be made of whatever cheap buttons you have lying around, hastily attached to a Raspberry Pi Pico or other compatible board. I hope to also include measurements for example controllers at some point.
 
-GPIO 2, 4, 6, 8, 10, 12, and 14 are keys 1-7 respectively. GPIO 26 is the turntable button. GPIO 16, 18, 20, and 22 are the four additional keys.
+This project is not finished, but is in a state where you could hook up 8 or more buttons to a Pi Pico and play IIDX (or your favorite .BMS player).
+
+My main goal is to make it particularly cheap and easy to get started with playing IIDX/BMS at home due to the expense of pre-built controllers and complex nature of constructing your own turntable if you decide do the DIY route.
 
 ## Features
 
-done:
+GPIO 2, 4, 6, 8, 10, 12, and 14 are keys 1-7 respectively. GPIO 26 is the turntable button. GPIO 16, 18, 20, and 22 are the four additional keys.
 
-- analog reporting of turntable key in joystick mode
+Press the turntable button to move the simulated turntable. The direction toggles between presses.
+
+Hold key 1 (GPIO 2) while plugging in the unit to enable keyboard+mouse mode.
 
 doesn't work:
 
 - keyboard+mouse mode (TODO)
 - LEDs
-- analog input devices have been completely removed
+- support for rotary encoders has been completely removed
 
 roadmap:
 
-- digital reporting of turntable key
-- support for extra buttons to specifically rotate the turntable axis in a given direction
-- turntable key defaults to spinning forwards if left alone for a second
+- support for extra buttons to specifically rotate the turntable axis in a given direction (for selecting songs)
+- make it so that the turntable key defaults to spinning forwards if left alone for a second
 - support for a lot of buttons
 - sample blueprint for controller with proper rectangle buttons for the keys and a 50mm square SDVX style button for the turntable area
 - sample blueprint for controller with 30mm arcade buttons for everything.
 
-distant roadmap:
+distant roadmap of features that may or may not ever happen:
 
-- sdvx all button config? this wouldn't need anything fancy, just mapping two digital buttons to the analog axis reported
-- no idea if I'm going to actually support the lights because I don't have them
+- support for digital reporting of turntable key (either just as one button or two)
 - remember last used mode/switch modes while on
+- sdvx all button config? this wouldn't need anything fancy, just mapping two digital buttons to the analog axis reported
+- no idea if I'm going to actually support LED lights because I don't have them
+- maybe allow rotary input again? eg, to have a cheap knob to use when selecting songs?
+- way to toggle turntable speed?
+- actual CAD files if you wanted to get things laser cut
+
+# Parts
+
+This is a work in progress. All prices listed in USD, and were checked in Feburary 2024.
+
+This project is designed around a Raspberry Pi Pico, and there is little benefit in using a different board, as I won't be testing on it or using any additional features of other boards. 
+
+For inputs, the extreme low-budget version will just use any 30mm round arcade buttons, such as Sanwa OBSF-30s. These typically go for $2.50-$3 each and are readily available at just about any online retailer that sells arcade parts. You could get cheaper, but a game like IIDX demands quality inputs, so there isn't much reason to spend less.
+
+The more arcade accurate unit uses the following:
+
+- [Samducksa CWB 405 Button](https://www.us.istmall.co.kr/Product/Detail/view/pid/71/cid/164) x7 for the main keys (they're $3.40 each as of this writing, but shipping is expensive from Korea). Typically 3 black on top and 4 white on the bottom, but as a DIY project, you can do as you wish. They're 50x33 buttons, so if you are willing to risk using cheaper ones, you can. Take note that the switches and springs on many 50x33 buttons are extremely heavy and hard to press for use in a rhythm game.
+- [IST 60UK Button](https://www.us.istmall.co.kr/Product/Detail/view/pid/67/cid/161) x1 for the turntable button (should be less than $8 each, also shipped from Korea). Any 60x60 arcade button would work. You might prefer a button like the 100mm round [Samducksa CWB 401B Button](https://www.us.istmall.co.kr/Product/Detail/view/pid/111/cid/161) (should be $9 or so), which is also flat on top, unlike typical 100mm buttons, but the blueprint will expect a 60mm one. I would use the CWB 401B if I had one.
+- The remaining 4 buttons can be whatever, although you could use the [Samducksa CWB 406 Button](https://www.us.istmall.co.kr/Product/Detail/view/pid/72/cid/164) if you prefer. I will likely use OBSF-30s on the blueprints I'm planning to create, but unlike the spacing between the 7 main keys and the turntable, the position of these doesn't matter nearly as much.
+
 
 ---
 
