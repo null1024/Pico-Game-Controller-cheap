@@ -41,6 +41,9 @@ void (*loop_mode)();
 uint16_t (*debounce_mode)();
 bool joy_mode_check = true;
 
+int8_t turntable_dir=1; //1 for turning forward, -1 for turning back
+int8_t turntable_held=0; //0 for unpressed, 1 for just pressed, 2 for held
+
 union {
   struct {
     uint8_t buttons[LED_GPIO_SIZE];
@@ -70,6 +73,7 @@ void ws2812b_update(uint32_t counter) {
 /**
  * HID/Reactive Lights
  **/
+/*
 void update_lights() {
   for (int i = 0; i < LED_GPIO_SIZE; i++) {
     if (time_us_64() - reactive_timeout_timestamp >= REACTIVE_TIMEOUT_MAX) {
@@ -87,10 +91,11 @@ void update_lights() {
     }
   }
 }
-
+*/
 struct report {
   uint16_t buttons;
   uint8_t joy0;
+  uint8_t joy1;
 } report;
 
 /**
@@ -98,24 +103,47 @@ struct report {
  **/
 void joy_mode() {
   if (tud_hid_ready()) {
+    /*
     // find the delta between previous and current enc_val
     for (int i = 0; i < ENC_GPIO_SIZE; i++) {
       cur_enc_val[i] +=
           ((ENC_REV[i] ? 1 : -1) * (enc_val[i] - prev_enc_val[i]));
       while (cur_enc_val[i] < 0) cur_enc_val[i] = ENC_PULSE + cur_enc_val[i];
       cur_enc_val[i] %= ENC_PULSE;
-
+      
+      cur_enc_val[i]+=report.buttons
       prev_enc_val[i] = enc_val[i];
     }
-
+*/
+    
+    //report.joy0 = ((double)cur_enc_val[0] / ENC_PULSE) * (UINT8_MAX + 1);
+    int turntable_current=(report.buttons>>7)&1;
+    if (turntable_current) {
+        turntable_held++;
+        //set direction
+        if (turntable_held==1) {
+          turntable_dir=-turntable_dir;
+        }
+        //clamp
+        if (turntable_held>2) { turntable_held=2; }
+    }
+    //release turntable
+    else {
+      turntable_held=0;
+    }
+    cur_enc_val[0]+=turntable_current*turntable_dir;
+    while (cur_enc_val[0] < 0) cur_enc_val[0] = ENC_PULSE + cur_enc_val[0];
+    cur_enc_val[0] %= ENC_PULSE;
+    report.buttons=report.buttons & ~((uint16_t)1<<7); //clear the turntable button
     report.joy0 = ((double)cur_enc_val[0] / ENC_PULSE) * (UINT8_MAX + 1);
-
+    //report.joy0=1;
+    report.joy1=0;
     tud_hid_n_report(0x00, REPORT_ID_JOYSTICK, &report, sizeof(report));
   }
 }
 
 /**
- * Keyboard Mode
+ * Keyboard Mode //TODO: broken lol
  **/
 void key_mode() {
   if (tud_hid_ready()) {  // Wait for ready, updating mouse too fast hampers
@@ -144,6 +172,25 @@ void key_mode() {
         delta[i] = (enc_val[i] - prev_enc_val[i]) * (ENC_REV[i] ? 1 : -1);
         prev_enc_val[i] = enc_val[i];
       }
+      /*
+      int turntable_current=(report.buttons>>7)&1;
+      if (turntable_current) {
+          turntable_held++;
+          //set direction
+          if (turntable_held==1) {
+            turntable_dir=-turntable_dir;
+          }
+          //clamp
+          if (turntable_held>2) { turntable_held=2; }
+      }
+      //release turntable
+      else {
+        turntable_held=0;
+      }
+      cur_enc_val[0]+=turntable_current*turntable_dir;
+      */
+      while (cur_enc_val[0] < 0) cur_enc_val[0] = ENC_PULSE + cur_enc_val[0];
+      cur_enc_val[0] %= ENC_PULSE;
       tud_hid_mouse_report(REPORT_ID_MOUSE, 0x00, delta[0] * MOUSE_SENS, 0, 0,
                            0);
     }
@@ -162,7 +209,7 @@ void update_inputs() {
     if (prev_sw_val[i] == false && !gpio_get(SW_GPIO[i]) == true) {
       sw_timestamp[i] = time_us_64();
     }
-    prev_sw_val[i] = !gpio_get(SW_GPIO[i]);
+      prev_sw_val[i] = !gpio_get(SW_GPIO[i]);    
   }
 }
 
@@ -198,10 +245,10 @@ void core1_entry() {
  * Initialize Board Pins
  **/
 void init() {
-  // LED Pin on when connected
+  // LED Pin off, blinks with turntable input
   gpio_init(25);
   gpio_set_dir(25, GPIO_OUT);
-  gpio_put(25, 1);
+  gpio_put(25, 0);
 
   // Set up the state machine for encoders
   pio = pio0;
@@ -210,6 +257,7 @@ void init() {
   // Setup Encoders
   for (int i = 0; i < ENC_GPIO_SIZE; i++) {
     enc_val[i], prev_enc_val[i], cur_enc_val[i] = 0;
+    /*
     encoders_program_init(pio, i, offset, ENC_GPIO[i], ENC_DEBOUNCE);
 
     dma_channel_config c = dma_channel_get_default_config(i);
@@ -226,6 +274,7 @@ void init() {
     irq_set_exclusive_handler(DMA_IRQ_0, dma_handler);
     irq_set_enabled(DMA_IRQ_0, true);
     dma_channel_set_irq0_enabled(i, true);
+    */
   }
 
   reactive_timeout_timestamp = time_us_64();
@@ -245,13 +294,13 @@ void init() {
     gpio_set_dir(SW_GPIO[i], GPIO_IN);
     gpio_pull_up(SW_GPIO[i]);
   }
-
+/*
   // Setup LED GPIO
   for (int i = 0; i < LED_GPIO_SIZE; i++) {
     gpio_init(LED_GPIO[i]);
     gpio_set_dir(LED_GPIO[i], GPIO_OUT);
   }
-
+*/
   // Set listener bools
   kbm_report = false;
 
@@ -293,7 +342,7 @@ int main(void) {
     update_inputs();
     report.buttons = debounce_mode();
     loop_mode();
-    update_lights();
+    //update_lights();
   }
 
   return 0;
