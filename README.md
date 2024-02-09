@@ -1,29 +1,35 @@
 # All-button IIDX controller
 
-TODO: everything -- nothing has been changed yet.
+This repository is for a DIY controller that uses only buttons to play Beatmania IIDX and similar games. In particular, it uses one button for the turntable, toggling direction between presses. The controller could theoretically be made of whatever cheap buttons you have lying around, hastily attached to a Raspberry Pi Pico or other compatible board. I hope to also include measurements for example controllers.
 
-This repository is expected to be code for a DIY controller using only buttons to play Beatmania IIDX and similar games. In particular, it uses one button for the turntable, toggling direction between presses. The controller could theoretically be made of whatever cheap buttons you have lying around, hastily attached to a Raspberry Pi Pico or other compatible board. I hope to also include measurements for example controllers.
+GPIO 2, 4, 6, 8, 10, 12, and 14 are keys 1-7 respectively. GPIO 26 is the turntable button. GPIO 16, 18, 20, and 22 are the four additional keys.
 
 ## Features
 
 done:
 
-- absolutely nothing
+- analog reporting of turntable key in joystick mode
+
+doesn't work:
+
+- keyboard+mouse mode (TODO)
+- LEDs
+- analog input devices have been completely removed
 
 roadmap:
 
-- analog reporting of turntable key
 - digital reporting of turntable key
 - support for extra buttons to specifically rotate the turntable axis in a given direction
 - turntable key defaults to spinning forwards if left alone for a second
 - support for a lot of buttons
-- no idea if I'm going to actually support the lights because I don't have them
 - sample blueprint for controller with proper rectangle buttons for the keys and a 50mm square SDVX style button for the turntable area
 - sample blueprint for controller with 30mm arcade buttons for everything.
 
 distant roadmap:
 
 - sdvx all button config? this wouldn't need anything fancy, just mapping two digital buttons to the analog axis reported
+- no idea if I'm going to actually support the lights because I don't have them
+- remember last used mode/switch modes while on
 
 ---
 
