@@ -38,6 +38,12 @@ distant roadmap of features that may or may not ever happen:
 - way to toggle turntable speed?
 - actual CAD files if you wanted to get things laser cut
 
+# Installation
+
+For the software, download Pico_Game_Controller.uf2 from inside build_uf2/. Hold the BOOTSEL button on your Pi Pico and plug it into your computer. The Pico should appear as a removable drive on your computer. Copy Pico_Game_Controller.uf2 onto the drive, and that's it. The Pico will automatically restart and appear as a controller.
+
+For the controls, GPIO 2, 4, 6, 8, 10, 12, and 14 are keys 1-7 respectively. GPIO 26 is the turntable button. GPIO 16, 18, 20, and 22 are the four additional keys. Mount each button in some kind of enclosure and plug it all together. I still need to make the blueprints, so you might need to go and look up something like "IIDX button spacing" on Google or something if you're unwilling to wait. 
+
 # Parts
 
 This is a work in progress. All prices listed in USD, and were checked in Feburary 2024.
