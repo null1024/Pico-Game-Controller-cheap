@@ -16,7 +16,6 @@ Hold key 1 (GPIO 2) while plugging in the unit to enable keyboard+mouse mode.
 
 doesn't work:
 
-- keyboard+mouse mode (TODO)
 - LEDs
 - support for rotary encoders has been completely removed
 
