@@ -150,6 +150,7 @@ void key_mode() {
                           // movement
     if (kbm_report) {
       /*------------- Keyboard -------------*/
+      report.buttons=report.buttons & ~((uint16_t)1<<7); //clear the turntable button
       uint8_t nkro_report[32] = {0};
       for (int i = 0; i < SW_GPIO_SIZE; i++) {
         if ((report.buttons >> i) % 2 == 1) {
@@ -166,13 +167,16 @@ void key_mode() {
                        sizeof(nkro_report));
     } else {
       /*------------- Mouse -------------*/
+      /*
+      int delta[ENC_GPIO_SIZE] = {0};
+      
       // find the delta between previous and current enc_val
       int delta[ENC_GPIO_SIZE] = {0};
       for (int i = 0; i < ENC_GPIO_SIZE; i++) {
         delta[i] = (enc_val[i] - prev_enc_val[i]) * (ENC_REV[i] ? 1 : -1);
         prev_enc_val[i] = enc_val[i];
       }
-      /*
+      
       int turntable_current=(report.buttons>>7)&1;
       if (turntable_current) {
           turntable_held++;
@@ -189,9 +193,24 @@ void key_mode() {
       }
       cur_enc_val[0]+=turntable_current*turntable_dir;
       */
-      while (cur_enc_val[0] < 0) cur_enc_val[0] = ENC_PULSE + cur_enc_val[0];
-      cur_enc_val[0] %= ENC_PULSE;
-      tud_hid_mouse_report(REPORT_ID_MOUSE, 0x00, delta[0] * MOUSE_SENS, 0, 0,
+      //while (cur_enc_val[0] < 0) cur_enc_val[0] = ENC_PULSE + cur_enc_val[0];
+      //cur_enc_val[0] %= ENC_PULSE;
+      int turntable_current=(report.buttons>>7)&1;
+      if (turntable_current) {
+          turntable_held++;
+          //set direction
+          if (turntable_held==1) {
+            turntable_dir=-turntable_dir;
+          }
+          //clamp
+          if (turntable_held>2) { turntable_held=2; }
+      }
+      //release turntable
+      else {
+        turntable_held=0;
+      }
+      //TODO: speed control
+      tud_hid_mouse_report(REPORT_ID_MOUSE, 0x00, turntable_current*turntable_dir, 0, 0,
                            0);
     }
     // Alternate reports
