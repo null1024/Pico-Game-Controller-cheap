@@ -18,8 +18,9 @@ roadmap of planned features:
 
 - support for extra buttons to specifically rotate the turntable axis in a given direction (for selecting songs)
 - make it so that the turntable key defaults to spinning forwards if left alone for a second
-- sample blueprint for controller with proper rectangle buttons for the keys and a 60mm square SDVX style button for the turntable area
+- sample blueprint for controller with proper rectangle buttons for the keys and a 60mm square SDVX style button for the turntable area (in progress, check the [layouts](https://github.com/null1024/Pico-Game-Controller-cheap/tree/main/layouts) folder)
 - sample blueprint for controller with 30mm arcade buttons for everything.
+- general code cleanup (it is a mess right now)
 
 distant roadmap of features that may or may not ever happen:
 
@@ -28,14 +29,14 @@ distant roadmap of features that may or may not ever happen:
 - remember last used mode/switch modes while on
 - sdvx all button config? this wouldn't need anything fancy, just mapping two digital buttons to the analog axis reported
 - no idea if I'm going to actually support LED lights because I don't have them
-- maybe allow rotary input again? eg, to have a cheap knob to use when selecting songs?
-- way to toggle turntable speed?
-- actual CAD files if you wanted to get things laser cut
+- way to toggle turntable speed? (might move this to the planned feature list)
+- settings key to configure controller options
+- full CAD files if you wanted to get things laser cut
 
 doesn't work:
 
-- LEDs don't work because I don't have them to test with at all
-- support for rotary encoders is entirely non-functional
+- LEDs don't work because I don't have any available to test with
+- support for rotary encoders was removed
 
 # Installation
 
