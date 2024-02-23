@@ -16,45 +16,46 @@ Hold key 1 (GPIO 2) while plugging the unit in to enable keyboard+mouse mode.
 
 roadmap of planned features:
 
-- support for extra buttons to specifically rotate the turntable axis in a given direction (for selecting songs)
-- make it so that the turntable key defaults to spinning forwards if left alone for a second
-- sample blueprint for controller with proper rectangle buttons for the keys and a 60mm square SDVX style button for the turntable area
+- sample blueprint for controller with proper rectangle buttons for the keys and a 60mm square SDVX style button for the turntable area (in progress, check the [layouts](https://github.com/null1024/Pico-Game-Controller-cheap/tree/main/layouts) folder)
+- sample blueprint for a "premium" option using a 100mm flat round button for the turntable (you could probably try a dome button)
 - sample blueprint for controller with 30mm arcade buttons for everything.
+- general code cleanup (it is a mess right now)
+- support for digital reporting of turntable key (either just as one button or two)1
 
 distant roadmap of features that may or may not ever happen:
 
 - configuration button, you'd press it and one of the 7 keys to toggle settings
-- support for digital reporting of turntable key (either just as one button or two)
+- support for extra buttons to specifically rotate the turntable axis in a given direction (for selecting songs)
+- make it so that the turntable key defaults to spinning forwards if left alone for a second
 - remember last used mode/switch modes while on
 - sdvx all button config? this wouldn't need anything fancy, just mapping two digital buttons to the analog axis reported
 - no idea if I'm going to actually support LED lights because I don't have them
-- maybe allow rotary input again? eg, to have a cheap knob to use when selecting songs?
-- way to toggle turntable speed?
-- actual CAD files if you wanted to get things laser cut
+- way to toggle turntable speed? (might move this to the planned feature list)
+- full CAD files if you wanted to get things laser cut or 3D printed (you can probably use the current file as-is as a base)
 
 doesn't work:
 
-- LEDs don't work because I don't have them to test with at all
-- support for rotary encoders is entirely non-functional
+- LEDs don't work because I don't have any available to test with
+- support for rotary encoders was removed
 
 # Installation
 
 Download Pico_Game_Controller.uf2 from inside [build_uf2](https://github.com/null1024/Pico-Game-Controller-cheap/tree/main/build_uf2). Hold the BOOTSEL button on your Pi Pico and plug it into your computer. The Pico should appear as a removable drive on your computer. Copy Pico_Game_Controller.uf2 onto the drive, and that's it. The Pico will automatically restart and appear as a controller.
 
-When wiring up the controls, GPIO 2, 4, 6, 8, 10, 12, and 14 are keys 1-7 respectively. GPIO 26 is the turntable button. GPIO 16, 18, 20, and 22 are the four additional keys. Mount each button in some kind of enclosure and plug it all together. I still need to make the blueprints, so you might need to go and look up something like "IIDX button spacing" on Google or something if you're unwilling to wait. 
+When wiring up the controls, GPIO 2, 4, 6, 8, 10, 12, and 14 are keys 1-7 respectively. GPIO 26 is the turntable button. GPIO 16, 18, 20, and 22 are the four additional keys. Mount each button in some kind of enclosure and plug it all together. I still need to complete the blueprints, but accurate button spacing for the keys is available in the included one. The turntable button distance and position isn't final, however.
 
 # Parts
 
 This is a work in progress. All prices listed in USD, and were checked in Feburary 2024.
 
-This project is designed around a Raspberry Pi Pico, and there is little benefit in using a different board, as I won't be testing on it or using any additional features of other boards. 
+This project is designed around a Raspberry Pi Pico. There is little benefit in using a different board, as I won't be testing on it or using any additional features of other boards.
 
-For inputs, the extreme low-budget version will just use any 30mm round arcade buttons, such as Sanwa OBSF-30s. These typically go for $2.50-$3 each and are readily available at just about any online retailer that sells arcade parts. You could get cheaper, but a game like IIDX demands quality inputs, so there isn't much reason to spend less.
+For inputs, the extreme low-budget version will just use any 30mm round arcade buttons, such as Sanwa OBSF-30s. These typically go for $2.50-$3 each and are readily available at just about any online retailer that sells arcade parts. You could get cheaper, but a game like IIDX demands quality inputs, so there isn't much reason to spend less. You will need at least 8 buttons. You might still be willing to get a larger button for the turntable button, too, even if it's more expensive.
 
 The more arcade accurate unit uses the following:
 
 - [Samducksa CWB 405 Button](https://www.us.istmall.co.kr/Product/Detail/view/pid/71/cid/164) x7 for the main keys (they're $3.40 each as of this writing, but shipping is expensive from Korea). Typically 3 black on top and 4 white on the bottom, but as a DIY project, you can do as you wish. They're 50x33 buttons, so if you are willing to risk using cheaper ones, you can. Take note that the switches and springs on many 50x33 buttons are extremely heavy and hard to press for use in a rhythm game.
-- [IST 60UK Button](https://www.us.istmall.co.kr/Product/Detail/view/pid/67/cid/161) x1 for the turntable button (should be less than $8 each, also shipped from Korea). Any 60x60 arcade button would work. You might prefer a button like the 100mm round [Samducksa CWB 401B Button](https://www.us.istmall.co.kr/Product/Detail/view/pid/111/cid/161) (should be $9 or so), which is also flat on top, unlike typical 100mm buttons, but the blueprint will expect a 60mm one. I would probably design around the CWB 401B if I had one.
+- [IST 60UK Button](https://www.us.istmall.co.kr/Product/Detail/view/pid/67/cid/161) x1 for the turntable button (should be less than $8 each, also shipped from Korea). Any 60x60 arcade button would work. You might prefer a button like the 100mm round [Samducksa CWB 401B Button](https://www.us.istmall.co.kr/Product/Detail/view/pid/111/cid/161) (should be $9 or so), which is also flat on top, unlike typical 100mm buttons dome buttons, but the blueprint will expect a 60mm one. I will be getting CWB 401B buttons soon, but they just aren't common, while 60x60 square is extremely ordinary.
 - The remaining 4 buttons can be whatever, although you could use the [Samducksa CWB 406 Button](https://www.us.istmall.co.kr/Product/Detail/view/pid/72/cid/164) if you prefer. I will likely use OBSF-30s on the blueprints I'm planning to create, but unlike the spacing between the 7 main keys and the turntable, the position of these doesn't matter nearly as much.
 
 You _could_ use arcade accurate Sanwa buttons, but it kind of defeats the point of this being a budget build. [Sanwa 60x60 buttons](https://www.us.istmall.co.kr/Product/Detail/view/pid/48/cid/165) are like $18.50 each right now, and [the 50x33 ones](https://www.us.istmall.co.kr/Product/Detail/view/pid/39/cid/165) are $12.50 each. $106 in buttons alone, before shipping. You would also need to replace the microswitches on the buttons, they're rather heavy for IIDX.
