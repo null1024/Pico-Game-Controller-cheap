@@ -8,11 +8,13 @@ My main goal is to make it particularly cheap and easy to get started with playi
 
 ## Features
 
-7 main gameplay keys, 1 turntable button, and 4 extra keys. GPIO pins 2, 4, 6, 8, 10, 12, and 14 are keys 1-7 respectively. GPIO 26 is the turntable button. GPIO 16, 18, 20, and 22 are the four additional keys. The controller will report 12 buttons, but HID button 8 is unused.
+7 main gameplay keys, 1 turntable button, and 4 extra keys. GPIO pins 2, 4, 6, 8, 10, 12, and 14 are keys 1-7 respectively. GPIO 26 is the turntable button. GPIO 16, 18, 20, and 22 are the four additional keys. The controller will report 12 buttons, but HID button 8 is unused by default.
 
-Press the turntable button to move the simulated turntable, which is output as either a joystick position by default or as a mouse movement in keyboard+mouse mode. The direction toggles between presses.
+Press the turntable button to move the simulated turntable, which is output as either an analog joystick position by default or as a mouse movement in keyboard+mouse mode. The direction toggles between presses.
 
 Hold key 1 (GPIO 2) while plugging the unit in to enable keyboard+mouse mode.
+Hold key 3 (GPIO 6) while plugging the unit in to enable bi-directional digital turntable mode, which reports a left or right joystick input when the turntable key is pressed. Currently, this mode cannot be combined with kb+m mode. This does not report a POV hat/d-pad input.
+Hold key 5 (GPIO 10) while plugging the unit in to enable single-input digital turntable mode, which reports HID button 8 when the turntable key is pressed.
 
 roadmap of planned features:
 
@@ -20,7 +22,7 @@ roadmap of planned features:
 - sample blueprint for a "premium" option using a 100mm flat round button for the turntable (you could probably try a dome button)
 - sample blueprint for controller with 30mm arcade buttons for everything.
 - general code cleanup (it is a mess right now)
-- support for digital reporting of turntable key (either just as one button or two)1
+- support for digital reporting of turntable key in kb+m mode
 
 distant roadmap of features that may or may not ever happen:
 
