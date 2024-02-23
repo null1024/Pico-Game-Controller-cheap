@@ -2,6 +2,19 @@
  * Pico Game Controller
  * @author SpeedyPotato
  */
+
+/*
+Modified by null1024.
+A lot of my changes are brutally, hideously hacky.
+There is definitely dead code everywhere.
+WS2812B lighting is probably broken since I don't have it.
+
+TODO list:
+* digital turntable modes
+* modifier to configure turntable speed in analog mode
+* support for per-button LEDs (once I get them, lol)
+* clean up some of the dead code
+*/
 #define PICO_GAME_CONTROLLER_C
 
 #include <stdio.h>
@@ -32,6 +45,7 @@ int cur_enc_val[ENC_GPIO_SIZE];
 bool prev_sw_val[SW_GPIO_SIZE];
 uint64_t sw_timestamp[SW_GPIO_SIZE];
 
+//switch between sending keyboard or mouse data every poll
 bool kbm_report;
 
 uint64_t reactive_timeout_timestamp;
@@ -39,7 +53,15 @@ uint64_t reactive_timeout_timestamp;
 void (*ws2812b_mode)();
 void (*loop_mode)();
 uint16_t (*debounce_mode)();
+
+//joystick or keyboard
 bool joy_mode_check = true;
+
+//TODO: actually implement digital turntable mode
+//analog output (mouse/analog stick) or digital output (d-pad/button/keyboard)
+bool turntable_digital_mode=false;
+//use toggling directions if false (eg, swap between up/down) or emit a single button press if true
+bool turntable_digital_single_key=false;
 
 int8_t turntable_dir=1; //1 for turning forward, -1 for turning back
 int8_t turntable_held=0; //0 for unpressed, 1 for just pressed, 2 for held
@@ -72,6 +94,7 @@ void ws2812b_update(uint32_t counter) {
 
 /**
  * HID/Reactive Lights
+ * TODO: re-enable, test to make sure it works still
  **/
 /*
 void update_lights() {
@@ -92,31 +115,18 @@ void update_lights() {
   }
 }
 */
+
+//holds controller state info
 struct report {
-  uint16_t buttons;
-  uint8_t joy0;
-  uint8_t joy1;
+  uint16_t buttons; //bitfield of 16 buttons
+  uint8_t joy0; //0-255 x direction
+  uint8_t joy1; //0-255 y direction
 } report;
 
-/**
- * Gamepad Mode
- **/
+//Gamepad mode
 void joy_mode() {
   if (tud_hid_ready()) {
-    /*
-    // find the delta between previous and current enc_val
-    for (int i = 0; i < ENC_GPIO_SIZE; i++) {
-      cur_enc_val[i] +=
-          ((ENC_REV[i] ? 1 : -1) * (enc_val[i] - prev_enc_val[i]));
-      while (cur_enc_val[i] < 0) cur_enc_val[i] = ENC_PULSE + cur_enc_val[i];
-      cur_enc_val[i] %= ENC_PULSE;
-      
-      cur_enc_val[i]+=report.buttons
-      prev_enc_val[i] = enc_val[i];
-    }
-*/
-    
-    //report.joy0 = ((double)cur_enc_val[0] / ENC_PULSE) * (UINT8_MAX + 1);
+    //read the turntable key
     int turntable_current=(report.buttons>>7)&1;
     if (turntable_current) {
         turntable_held++;
@@ -134,18 +144,33 @@ void joy_mode() {
     cur_enc_val[0]+=turntable_current*turntable_dir;
     while (cur_enc_val[0] < 0) cur_enc_val[0] = ENC_PULSE + cur_enc_val[0];
     cur_enc_val[0] %= ENC_PULSE;
-    report.buttons=report.buttons & ~((uint16_t)1<<7); //clear the turntable button
-    report.joy0 = ((double)cur_enc_val[0] / ENC_PULSE) * (UINT8_MAX + 1);
-    //report.joy0=1;
-    report.joy1=0;
+    //two-direction turntable key vs single input mode
+    if (!turntable_digital_single_key) {
+      report.buttons=report.buttons & ~((uint16_t)1<<7); //clear the turntable button
+      if (!turntable_digital_mode) {
+        report.joy0 = ((double)cur_enc_val[0] / ENC_PULSE) * (UINT8_MAX + 1); //emit a looping analog value
+      } else {
+        if (turntable_held>0) {
+          report.joy0=127+(127*turntable_dir); //emit hard left/right
+        } else {
+          report.joy0=127; //emit center
+        }
+      }
+    }
+    //single-direction turntable
+    else {
+      //we don't need to do anything else since we didn't clear the turntable's key (8 by default)
+      report.joy0=127; //emit center
+    }
+    report.joy1=127; //wasn't getting Windows to recognize the turntable properly without this
     tud_hid_n_report(0x00, REPORT_ID_JOYSTICK, &report, sizeof(report));
   }
 }
 
-/**
- * Keyboard Mode //TODO: broken lol
- **/
+
+//Keyboard Mode
 void key_mode() {
+  //TODO: handle digital turntable mode
   if (tud_hid_ready()) {  // Wait for ready, updating mouse too fast hampers
                           // movement
     if (kbm_report) {
@@ -323,13 +348,24 @@ void init() {
   // Set listener bools
   kbm_report = false;
 
-  // Joy/KB Mode Switching
+  // hold 1 during startup for kb+m mode
   if (!gpio_get(SW_GPIO[0])) {
     loop_mode = &key_mode;
     joy_mode_check = false;
   } else {
     loop_mode = &joy_mode;
     joy_mode_check = true;
+  }
+
+  //hold 3 during startup for 2 button digital turntable mode
+  if (!gpio_get(SW_GPIO[2])) {
+    turntable_digital_mode=true;
+  }
+
+  //hold 5 during startup for 1 button digital turntable mode
+  if (!gpio_get(SW_GPIO[4])) {
+    turntable_digital_mode=true;
+    turntable_digital_single_key=true;
   }
 
   // RGB Mode Switching
