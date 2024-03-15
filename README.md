@@ -23,15 +23,16 @@ roadmap of planned features:
 - sample blueprint for controller with 30mm arcade buttons for everything.
 - general code cleanup (it is a mess right now)
 - support for digital reporting of turntable key in kb+m mode
+- support for an extra key ("key 0", dunno what GPIO I'll assign) to allow for hacky support for spinning the controller around for P2 side and Pop'n; technically this will be 2cm too close for P2 players in the blueprints (the key 0 cutout hole is ~74mm away from the turntable button hole and thus a bit too close, key 1's cutout is ~9mcm away which is about correct)
+- reimplement LED lights for keypresses, I might have broken them
 
 distant roadmap of features that may or may not ever happen:
 
 - configuration button, you'd press it and one of the 7 keys to toggle settings
 - support for extra buttons to specifically rotate the turntable axis in a given direction (for selecting songs)
-- make it so that the turntable key defaults to spinning forwards if left alone for a second
-- remember last used mode/switch modes while on
+- make it so that the turntable key defaults to spinning forwards if left alone for a bit (this shouldn't affect gameplay and would make menuing with the one button much nicer)
+- remember last used mode/switch modes while on (dunno if I'll bother)
 - sdvx all button config? this wouldn't need anything fancy, just mapping two digital buttons to the analog axis reported
-- no idea if I'm going to actually support LED lights because I don't have them
 - way to toggle turntable speed? (might move this to the planned feature list)
 - full CAD files if you wanted to get things laser cut or 3D printed (you can probably use the current file as-is as a base)
 
