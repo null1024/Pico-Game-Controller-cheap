@@ -16,13 +16,14 @@ Hold key 1 (GPIO 2) while plugging the unit in to enable keyboard+mouse mode.
 Hold key 3 (GPIO 6) while plugging the unit in to enable bi-directional digital turntable mode, which reports a left or right joystick input when the turntable key is pressed. Currently, this mode cannot be combined with kb+m mode. This does not report a POV hat/d-pad input.
 Hold key 5 (GPIO 10) while plugging the unit in to enable single-input digital turntable mode, which reports HID button 8 when the turntable key is pressed.
 
+You can combine these three options. 1+3 would be bi-directional digital keyboard input mode (no mouse), which reports an up or down arrow key press when the turntable key is pressed. 1+5 is single button turntable mode, reporting the Q key when pressed.
+
 roadmap of planned features:
 
 - sample blueprint for controller with proper rectangle buttons for the keys and a 60mm square SDVX style button for the turntable area (in progress, check the [layouts](https://github.com/null1024/Pico-Game-Controller-cheap/tree/main/layouts) folder)
 - sample blueprint for a "premium" option using a 100mm flat round button for the turntable (you could probably try a dome button)
 - sample blueprint for controller with 30mm arcade buttons for everything.
 - general code cleanup (it is a mess right now)
-- support for digital reporting of turntable key in kb+m mode
 - support for an extra key ("key 0", dunno what GPIO I'll assign) to allow for hacky support for spinning the controller around for P2 side and Pop'n; technically this will be 2cm too close for P2 players in the blueprints (the key 0 cutout hole is ~74mm away from the turntable button hole and thus a bit too close, key 1's cutout is ~9mcm away which is about correct)
 - reimplement LED lights for keypresses, I might have broken them
 
@@ -58,11 +59,12 @@ For inputs, the extreme low-budget version will just use any 30mm round arcade b
 The more arcade accurate unit uses the following:
 
 - [Samducksa CWB 405 Button](https://www.us.istmall.co.kr/Product/Detail/view/pid/71/cid/164) x7 for the main keys (they're $3.40 each as of this writing, but shipping is expensive from Korea). Typically 3 black on top and 4 white on the bottom, but as a DIY project, you can do as you wish. They're 50x33 buttons, so if you are willing to risk using cheaper ones, you can. Take note that the switches and springs on many 50x33 buttons are extremely heavy and hard to press for use in a rhythm game.
-- [IST 60UK Button](https://www.us.istmall.co.kr/Product/Detail/view/pid/67/cid/161) x1 for the turntable button (should be less than $8 each, also shipped from Korea). Any 60x60 arcade button would work. You might prefer a button like the 100mm round [Samducksa CWB 401B Button](https://www.us.istmall.co.kr/Product/Detail/view/pid/111/cid/161) (should be $9 or so), which is also flat on top, unlike typical 100mm buttons dome buttons, but the blueprint will expect a 60mm one. I will be getting CWB 401B buttons soon, but they just aren't common, while 60x60 square is extremely ordinary.
+- [IST 60UK Button](https://www.us.istmall.co.kr/Product/Detail/view/pid/67/cid/161) x1 for the turntable button (should be less than $8 each, also shipped from Korea). Any 60x60 arcade button would work. You might prefer a button like the 100mm round [Samducksa CWB 401B Button](https://www.us.istmall.co.kr/Product/Detail/view/pid/111/cid/161) (should be $9 or so), which is also flat on top, unlike typical 100mm buttons dome buttons, but the blueprint will expect a 60mm one. I have CWB 401B buttons, but they just aren't common, while 60x60 square is extremely ordinary. The springs on the CWB 401B are VERY heavy, you'll almost certainy need to swap them for something lighter. The button is also quite heavy in general. It looks nicer than the 60UK by a lot, and it's satisfyingly big, but it's not ideal.
 - The remaining 4 buttons can be whatever, although you could use the [Samducksa CWB 406 Button](https://www.us.istmall.co.kr/Product/Detail/view/pid/72/cid/164) if you prefer. I will likely use OBSF-30s on the blueprints I'm planning to create, but unlike the spacing between the 7 main keys and the turntable, the position of these doesn't matter nearly as much.
 
 You _could_ use arcade accurate Sanwa buttons, but it kind of defeats the point of this being a budget build. [Sanwa 60x60 buttons](https://www.us.istmall.co.kr/Product/Detail/view/pid/48/cid/165) are like $18.50 each right now, and [the 50x33 ones](https://www.us.istmall.co.kr/Product/Detail/view/pid/39/cid/165) are $12.50 each. $106 in buttons alone, before shipping. You would also need to replace the microswitches on the buttons, they're rather heavy for IIDX.
 
+I am also designing an ambidextrous layout, using 50x33 buttons for the turntable on both sides of the key area.
 
 ---
 
