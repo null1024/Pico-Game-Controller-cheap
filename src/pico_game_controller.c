@@ -170,25 +170,57 @@ void joy_mode() {
 
 //Keyboard Mode
 void key_mode() {
+  int turntable_current=0;
   //TODO: handle digital turntable mode
   if (tud_hid_ready()) {  // Wait for ready, updating mouse too fast hampers
                           // movement
     if (kbm_report) {
+      //handle digital turntable
+      turntable_current=(report.buttons>>7)&1;
+      if (turntable_digital_mode) {
+        if (turntable_current) {
+            turntable_held++;
+            //set direction
+            if (turntable_held==1) {
+              turntable_dir=-turntable_dir;
+            }
+            //clamp
+            if (turntable_held>2) { turntable_held=2; }
+        }
+        //release turntable
+        else {
+          turntable_held=0;
+        }
+      }
+      else {
+        report.buttons=report.buttons & ~((uint16_t)1<<7); //clear the turntable button
+      }
       /*------------- Keyboard -------------*/
-      report.buttons=report.buttons & ~((uint16_t)1<<7); //clear the turntable button
       uint8_t nkro_report[32] = {0};
       for (int i = 0; i < SW_GPIO_SIZE; i++) {
         if ((report.buttons >> i) % 2 == 1) {
-          uint8_t bit = SW_KEYCODE[i] % 8;
-          uint8_t byte = (SW_KEYCODE[i] / 8) + 1;
-          if (SW_KEYCODE[i] >= 240 && SW_KEYCODE[i] <= 247) {
+          uint8_t current_key = SW_KEYCODE[i];
+          //handle turntable key
+          if (i==7 && turntable_digital_mode) {
+            if (!turntable_digital_single_key) {
+              if (turntable_dir>0) {
+                current_key=HID_KEY_ARROW_DOWN;
+              }
+              else {
+                current_key=HID_KEY_ARROW_UP;
+              }
+            }
+          }
+          uint8_t bit = current_key % 8;
+          uint8_t byte = (current_key / 8) + 1;
+          if (current_key >= 240 && current_key <= 247) {
             nkro_report[0] |= (1 << bit);
           } else if (byte > 0 && byte <= 31) {
             nkro_report[byte] |= (1 << bit);
           }
         }
-      }
-      tud_hid_n_report(0x00, REPORT_ID_KEYBOARD, &nkro_report,
+      }  
+    tud_hid_n_report(0x00, REPORT_ID_KEYBOARD, &nkro_report,
                        sizeof(nkro_report));
     } else {
       /*------------- Mouse -------------*/
@@ -220,26 +252,32 @@ void key_mode() {
       */
       //while (cur_enc_val[0] < 0) cur_enc_val[0] = ENC_PULSE + cur_enc_val[0];
       //cur_enc_val[0] %= ENC_PULSE;
-      int turntable_current=(report.buttons>>7)&1;
-      if (turntable_current) {
-          turntable_held++;
-          //set direction
-          if (turntable_held==1) {
-            turntable_dir=-turntable_dir;
-          }
-          //clamp
-          if (turntable_held>2) { turntable_held=2; }
+      turntable_current=(report.buttons>>7)&1;
+      if (!turntable_digital_mode) {
+        if (turntable_current) {
+            turntable_held++;
+            //set direction
+            if (turntable_held==1) {
+              turntable_dir=-turntable_dir;
+            }
+            //clamp
+            if (turntable_held>2) { turntable_held=2; }
+        }
+        //release turntable
+        else {
+          turntable_held=0;
+        }
+        //disable mouse input in digital turntable mode
       }
-      //release turntable
       else {
-        turntable_held=0;
+        turntable_current=0;
       }
       //TODO: speed control
       tud_hid_mouse_report(REPORT_ID_MOUSE, 0x00, turntable_current*turntable_dir, 0, 0,
-                           0);
+                          0);
+      // Alternate reports
+      kbm_report = !kbm_report;
     }
-    // Alternate reports
-    kbm_report = !kbm_report;
   }
 }
 
